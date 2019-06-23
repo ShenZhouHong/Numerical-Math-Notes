@@ -22,3 +22,33 @@
 % of the page (e.g. like a painting frame). The default LaTeX title sits a bit
 % too low, so the following command sets it higher.
 \setlength{\droptitle}{-4em}   % This is your set screw
+
+% This allows LaTeX table cells to be slightly wider (taller).
+\usepackage{makecell}
+\setcellgapes{4pt}
+
+% This definition allows you to \textwidth a \tikzpicture.
+\usepackage{environ}
+\makeatletter
+\newsavebox{\measure@tikzpicture}
+\NewEnviron{scaletikzpicturetowidth}[1]{%
+  \def\tikz@width{#1}%
+  \def\tikzscale{1}\begin{lrbox}{\measure@tikzpicture}%
+  \BODY
+  \end{lrbox}%
+  \pgfmathparse{#1/\wd\measure@tikzpicture}%
+  \edef\tikzscale{\pgfmathresult}%
+  \BODY
+}
+\makeatother
+
+% This allows you to draw an arc in \tikzpicture with center first e.g.
+% \centerarc[red,thick](0,0)(5:85:1)
+\def\centerarc[#1](#2)(#3:#4:#5)% Syntax: [draw options] (center) (initial angle:final angle:radius)
+    { \draw[#1] ($(#2)+({#5*cos(#3)},{#5*sin(#3)})$) arc (#3:#4:#5); }
+
+% This second collection of mumbo jumble allows you to make the arc symbol using \wideparen{ABC}
+\DeclareFontFamily{OMX}{yhex}{}
+\DeclareFontShape{OMX}{yhex}{m}{n}{<->yhcmex10}{}
+\DeclareSymbolFont{yhlargesymbols}{OMX}{yhex}{m}{n}
+\DeclareMathAccent{\wideparen}{\mathord}{yhlargesymbols}{"F3}
